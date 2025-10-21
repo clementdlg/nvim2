@@ -6,4 +6,3 @@ require('tokyonight').setup {
 }
 
 vim.cmd.colorscheme('tokyonight')
-vim.cmd('hi Comment gui=none')

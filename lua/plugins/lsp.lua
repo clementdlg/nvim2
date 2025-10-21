@@ -1,31 +1,17 @@
--- [[ LSP setup ]]
+--[[-----------
+	LSP setup 
+-----------]]
+
+-- [[ Plugins ]]
 MiniDeps.add('neovim/nvim-lspconfig')
 MiniDeps.add({
 	source = 'saghen/blink.cmp',
-	version = '1.*',
 })
 
 -- [[ LSP config ]]
+-- use lspconfig's config and override them with my own preferences
+local servers = require('lsp_servers').servers
 local capabilities = require('blink.cmp').get_lsp_capabilities()
-local servers = {
-	bashls = {},
-
-	lua_ls = {
-		settings = {
-			Lua = {
-				diagnostics = { globals = { 'vim' } },
-			},
-		},
-	},
-
-	ansiblels = {
-		settings = {
-			ansible = {
-				validation = { enabled = false },
-			},
-		},
-	},
-}
 
 for name, config in pairs(servers) do
 	config.capabilities = capabilities
@@ -37,7 +23,7 @@ end
 local severity = vim.diagnostic.severity
 
 vim.diagnostic.config {
-	severity_sort = true,
+	-- severity_sort = true,
 	float = { border = 'rounded', source = 'if_many' },
 	underline = { severity = severity.ERROR },
 	signs = {
@@ -56,15 +42,21 @@ vim.diagnostic.config {
 }
 
 -- [[ Completion ]]
--- require('blink.cmp').setup({
---   keymap = { preset = 'default' }, -- basic mappings
---   completion = {
---     auto_trigger = true,        -- automatically open menu when typing
---     min_length = 1,             -- start after 1 character
---     documentation = { auto_show = true },
---     menu = { border = 'rounded' },
---   },
---   appearance = { use_nvim_cmp_as_default = false },
--- })
+require('blink.cmp').setup {
+	keymap = {
+		preset = 'default',
+	},
+	appearance = {
+		nerd_font_variant = 'mono',
+	},
+	completion = {
+		documentation = { auto_show = false, auto_show_delay_ms = 500 },
+	},
+	sources = {
+		default = { 'lsp', 'path' },
+	},
+	fuzzy = { implementation = 'lua' },
+	signature = { enabled = true },
+}
 
 -- [[ Highlights ]]
