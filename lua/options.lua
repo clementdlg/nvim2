@@ -1,9 +1,5 @@
--- krems
 vim.g.netrw_banner = 0
 vim.g.netrw_liststyle = 3
-
---  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
-vim.g.have_nerd_font = true
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.mouse = 'a'
@@ -28,21 +24,19 @@ vim.o.confirm = true
 vim.opt.winborder = 'rounded'
 vim.opt.path:append('**')
 
--- Formating
--- -- Set all to 4 spaces of indent by default
+-- [[ Formating ]]
+-- Set all to 4 spaces of indent by default
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 
-local indend_by_2 = { "javascript", "typescript", "json", "html", "css", "yaml", "yml" }
-
-local augroup = vim.api.nvim_create_augroup("UserConfig", {})
-
--- -- Override for specific types
+local augroup = vim.api.nvim_create_augroup("options", {})
+local indend_by_2 = { "javascript", "json", "html", "yaml", "yml" }
+-- Override for specific types
 vim.api.nvim_create_autocmd("FileType", {
-  group = augroup,
-  pattern = indend_by_2,
-  callback = function()
-    vim.opt_local.tabstop = 2
-    vim.opt_local.shiftwidth = 2
-  end,
+    group = augroup,
+    pattern = indend_by_2,
+    callback = function()
+        vim.opt_local.tabstop = 2
+        vim.opt_local.shiftwidth = 2
+    end,
 })

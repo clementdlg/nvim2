@@ -1,9 +1,9 @@
 MiniDeps.add({
 	source = 'nvim-telescope/telescope.nvim',
-	depends = { 
+	depends = {
 		'nvim-lua/plenary.nvim',
 		{
-			source = 'nvim-telescope/telescope-fzf-native.nvim', 
+			source = 'nvim-telescope/telescope-fzf-native.nvim',
 			hooks = { post_checkout = function()
 				vim.fn.system('make')
 			end
@@ -17,14 +17,15 @@ MiniDeps.add({
 })
 
 -- [[ Configuration ]]
-require('telescope').setup {}
 
 -- [[ Imports ]]
 local telescope = require('telescope')
 local builtin = require('telescope.builtin')
 local themes = require('telescope.themes')
 
-pcall(telescope.load_extension, 'fzf')
+require('telescope').setup {
+	pcall(telescope.load_extension, 'fzf')
+}
 
 local dropdown = function(picker)
   return function()

@@ -2,7 +2,6 @@
 	Core LSP
 --------------]]
 -- This is the part of the LSP config that is native to Neovim. No plugin config here
-
 local M = {}
 
 M.servers = {
@@ -89,5 +88,8 @@ end
 vim.api.nvim_create_autocmd('LspAttach', {
 	callback = function(event) lsp_highlight(event) end
 })
+
+
+-- [[ Inlay hints ]]
 
 return M
