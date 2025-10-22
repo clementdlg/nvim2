@@ -9,7 +9,7 @@ MiniDeps.add({
 
 -- [[ LSP config ]]
 -- use lspconfig's config and override them with my own preferences
-local servers = require('core-lsp').servers
+local servers = require('languages').servers
 local capabilities = require('blink.cmp').get_lsp_capabilities()
 
 for name, config in pairs(servers) do

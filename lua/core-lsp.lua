@@ -2,30 +2,6 @@
 	Core LSP
 --------------]]
 -- This is the part of the LSP config that is native to Neovim. No plugin config here
-local M = {}
-
-M.servers = {
-	bashls = {},
-
-	lua_ls = {
-		settings = {
-			Lua = {
-				workspace = {
-					library = vim.api.nvim_get_runtime_file("", true),
-				}
-			},
-		},
-	},
-
-	ansiblels = {
-		settings = {
-			ansible = {
-				validation = { enabled = false },
-			},
-		},
-	},
-}
-
 -- [[ Keymaps ]]
 -- TODO: Add keymaps
 
@@ -89,7 +65,4 @@ vim.api.nvim_create_autocmd('LspAttach', {
 	callback = function(event) lsp_highlight(event) end
 })
 
-
 -- [[ Inlay hints ]]
-
-return M

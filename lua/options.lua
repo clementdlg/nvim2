@@ -15,7 +15,7 @@ vim.o.timeoutlen = 600
 vim.o.splitright = true
 vim.o.splitbelow = true
 vim.o.list = true
-vim.opt.listchars = { tab = '| ', trail = '·', nbsp = '␣' }
+vim.opt.listchars = { tab = '❘ ', trail = '·', nbsp = '␣' }
 vim.opt.autoindent = true
 vim.o.inccommand = 'split'
 vim.o.cursorline = true
@@ -29,14 +29,15 @@ vim.opt.path:append('**')
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 
+local indend_by_2 = require('languages').indend_by_2
 local augroup = vim.api.nvim_create_augroup("options", {})
-local indend_by_2 = { "javascript", "json", "html", "yaml", "yml" }
+
 -- Override for specific types
 vim.api.nvim_create_autocmd("FileType", {
-    group = augroup,
-    pattern = indend_by_2,
-    callback = function()
-        vim.opt_local.tabstop = 2
-        vim.opt_local.shiftwidth = 2
-    end,
+	group = augroup,
+	pattern = indend_by_2,
+	callback = function()
+		vim.opt_local.tabstop = 2
+		vim.opt_local.shiftwidth = 2
+	end,
 })

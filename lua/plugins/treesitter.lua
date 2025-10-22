@@ -5,22 +5,7 @@ MiniDeps.add({
 	hooks = { post_checkout = function() vim.cmd('TSUpdate') end },
 })
 
-
-local languages = {
-	'bash',
-	'python',
-	'lua',
-	'c',
-	'dockerfile',
-	'tmux',
-	'html',
-	'yaml',
-	'json',
-	'markdown',
-	-- 'rust',
-	-- 'go',
-	-- 'terraform',
-}
+local languages = require('languages').highlight_syntax
 
 require('nvim-treesitter.configs').setup({
 	ensure_installed = languages,
