@@ -1,12 +1,13 @@
 -- [[ General Keymaps ]]
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
+
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- copy / paste
-vim.keymap.set('n', '<Leader>y', '"+y', { noremap = true, silent = true })
-vim.keymap.set('n', '<Leader>p', '"+p', { noremap = true, silent = true })
-vim.keymap.set('v', '<Leader>y', '"+y', { noremap = true, silent = true })
-vim.keymap.set('v', '<Leader>p', '"+p', { noremap = true, silent = true })
+vim.keymap.set({'n', 'v' }, '<Leader>y', '"+y', { noremap = true })
+vim.keymap.set({'n', 'v' }, '<Leader>p', '"+p', { noremap = true })
 
 -- up n down center
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { noremap = true, silent = true })
@@ -18,8 +19,8 @@ vim.keymap.set('n', 'N', 'Nzz', { noremap = true, silent = true })
 
 -- center cursor
 vim.keymap.set('n', '<Leader>e', ':Lexplore<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<Leader>n', ':bn<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<Leader>p', ':bp<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<Leader>bn', ':bn<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<Leader>bp', ':bp<CR>', { noremap = true, silent = true })
 
 -- [[ Basic Autocommands ]]
 -- highlight text on yank

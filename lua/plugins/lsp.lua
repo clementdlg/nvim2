@@ -1,7 +1,6 @@
---[[-----------
+--[[------------
 	LSP setup 
------------]]
-
+---------------]]
 -- [[ Plugins ]]
 MiniDeps.add('neovim/nvim-lspconfig')
 MiniDeps.add({
@@ -21,9 +20,8 @@ end
 
 -- [[ Diagnostics ]]
 local severity = vim.diagnostic.severity
-
 vim.diagnostic.config {
-	-- severity_sort = true,
+	severity_sort = true,
 	float = { border = 'rounded', source = 'if_many' },
 	underline = { severity = severity.ERROR },
 	signs = {
@@ -34,9 +32,9 @@ vim.diagnostic.config {
 			[severity.HINT] = '󰌶 ',
 		},
 	},
-	virtual_lines = {
-		enabled = true,
+	virtual_text = {
 		source = 'if_many',
+		spacing = 2,
 		format = function(diagnostic) return diagnostic.message end,
 	},
 }
