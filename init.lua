@@ -1,7 +1,7 @@
 -- [[ Native config ]]
 require 'options'
 require 'keymaps'
-require 'lsp_servers'
+require 'core-lsp'
 
 -- [[ Plugin config ]]
 require 'plugins.minideps'
@@ -11,24 +11,10 @@ require 'plugins.fuzzyfind'
 require 'plugins.lsp'
 
 --   {
---     -- Main LSP Configuration
---     'neovim/nvim-lspconfig',
---     dependencies = {
---       -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
---       { 'mason-org/mason.nvim', opts = {} },
---       'saghen/blink.cmp',
---     },
---     config = function()
 --       --  This function gets run on every new buffer to attach LSP
 --       vim.api.nvim_create_autocmd('LspAttach', {
 --         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
 --         callback = function(event)
---           -- In this case, we create a function that lets us more easily define mappings specific
---           -- for LSP related items. It sets the mode, buffer and description for us each time.
---           local map = function(keys, func, desc, mode)
---             mode = mode or 'n'
---             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
---           end
 --
 --           map('<Leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
 --           map('<Leader>ga', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
