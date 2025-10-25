@@ -6,8 +6,6 @@ M.highlight_syntax = {
 	'python',
 	'lua',
 	'c',
-	'dockerfile',
-	'tmux',
 	'html',
 	'yaml',
 	'json',
@@ -38,6 +36,8 @@ M.servers = {
 			},
 		},
 	},
+
+	docker_language_server = {},
 }
 
 -- [[ 2 spaces indentation ]]
