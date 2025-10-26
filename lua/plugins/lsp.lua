@@ -1,12 +1,6 @@
 --[[-------------
 	LSP setup 
 ---------------]]
--- [[ Plugins ]]
-MiniDeps.add('neovim/nvim-lspconfig')
-MiniDeps.add({
-	source = 'saghen/blink.cmp',
-})
-
 -- [[ LSP config ]]
 -- use lspconfig's config and override them with my own preferences
 local servers = require('languages').servers
