@@ -15,43 +15,20 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- import mason tool list
+local ensure_installed = require("mason-tools").array
+
 -- Setup lazy.nvim
 require("lazy").setup({
-	-- 🌙 Tokyonight colorscheme
-	{
-		'folke/tokyonight.nvim',
-		priority = 1000,
+	'mason-tool-installer.nvim',
+
+	dependencies = {
+		{
+			'mason-org/mason.nvim', opts = {}
+		}
 	},
 
-	-- 🔭 Telescope + dependencies
-	{
-		'nvim-telescope/telescope.nvim',
-		dependencies = {
-			'nvim-lua/plenary.nvim',
-			'nvim-tree/nvim-web-devicons',
-			{
-				'nvim-telescope/telescope-fzf-native.nvim',
-				build = 'make',
-				cond = function()
-					return vim.fn.executable('make') == 1
-				end,
-			},
-		},
-	},
-
-	-- ⚙️ LSP config
-	{ 'neovim/nvim-lspconfig' },
-
-	-- 🧠 Completion (blink.cmp)
-	{ 'saghen/blink.cmp' },
-
-	-- 🌳 Treesitter
-	{
-		'nvim-treesitter/nvim-treesitter',
-		build = ':TSUpdate',
-		branch = 'master', -- equivalent of `checkout`
-	},
-
-	-- 📊 Mini.statusline
-	{ 'echasnovski/mini.statusline' },
+	config = function()
+		ensure_installed = ensure_installed
+	end
 })
