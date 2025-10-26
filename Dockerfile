@@ -1,30 +1,57 @@
-FROM alpine:3.22.2
-ARG REPO="https://github.com/clementdlg/nvim2"
 ARG USER="krem"
 ARG HOME="/home/${USER}"
+ARG CFG_REPO="https://github.com/clementdlg/nvim2.git"
+ARG NVIM_CFG="/home/${USER}/.config/nvim"
 
-RUN apk update && apk add neovim \
-	git \
-	gcc \
-	musl-dev \
-	npm \
-	go \
-	shellcheck \
-	ansible-core \
-	&& rm -rf /var/cache/apk/*
-
-RUN npm -g i \
-	@ansible/ansible-language-server \
-	bash-language-server
-
-# RUN go install github.com/docker/docker-language-server/cmd/docker-language-server@07d5add
-
+# - - - - - - - - - -
+FROM alpine:3.22 AS nvim
+ARG USER
+ARG HOME
+RUN apk update && apk add neovim git
 RUN adduser -h $HOME -D $USER
 USER $USER
-WORKDIR ${HOME}/.config/nvim
-RUN git clone --depth 1 ${REPO} ${HOME}/.config/nvim && \
-	nvim -l ~/.config/nvim/init.lua
+# - - - - - - - - - -
+FROM nvim AS tools
+ARG BRANCH="lazy"
+ARG USER
+ARG HOME
+ARG CFG_REPO
+ARG NVIM_CFG
 
-WORKDIR ${HOME}/cwd
+USER root
+RUN apk update && apk add gcc musl-dev npm \
+	&& rm -rf /var/cache/apk/*
+
+USER $USER
+WORKDIR $NVIM_CFG
+RUN git clone --branch=$BRANCH $CFG_REPO $NVIM_CFG
+# - - - - - - - - - -
+FROM tools AS plugin-build
+ARG BRANCH="lazy"
+ARG CFG_REPO
+ARG NVIM_CFG
+WORKDIR $NVIM_CFG
+RUN git checkout $BRANCH && git pull \
+	&& nvim --headless -c "qa"
+# - - - - - - - - - -
+FROM tools AS lsp-build
+ARG BRANCH="mason"
+ARG NVIM_CFG
+WORKDIR $NVIM_CFG
+RUN git checkout $BRANCH && git pull \
+	&& nvim --headless -c "MasonToolsInstallSync" -c "qa"
+# - - - - - - - - - -
+FROM nvim
+ARG BRANCH="docker-main"
+ARG HOME
+ARG MASON_PATH="${HOME}/.local/share/nvim/mason"
+ARG LAZY_PATH="${HOME}/.local/share/nvim/lazy"
+ARG CFG_REPO
+ARG NVIM_CFG
+COPY --from=plugin-build $LAZY_PATH $LAZY_PATH
+COPY --from=lsp-build $MASON_PATH $MASON_PATH
+
+RUN git clone --depth 1 --branch=$BRANCH $CFG_REPO $NVIM_CFG
+WORKDIR $HOME/cwd
 ENV LC_ALL="en_US.UTF-8"
 ENTRYPOINT ["nvim"]
