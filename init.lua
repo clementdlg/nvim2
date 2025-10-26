@@ -16,7 +16,13 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- import mason tool list
-local ensure_installed = require("mason-tools").array
+-- local ensure_installed = require("mason-tools").array
+local ensure_installed = {
+	'stylua',
+	'lua-language-server',
+	'bash-language-server',
+	'ansible-language-server',
+}
 
 -- Setup lazy.nvim
 require("lazy").setup({{
@@ -29,6 +35,9 @@ require("lazy").setup({{
 	},
 
 	config = function()
-		ensure_installed = ensure_installed
+		require("mason-tool-installer").setup({
+			ensure_installed = ensure_installed,
+			run_on_start = true,
+		})
 	end
 }})
