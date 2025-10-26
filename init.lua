@@ -1,20 +1,4 @@
--- Bootstrap lazy.nvim
-local lazypath = os.getenv("LAZY")
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-  if vim.v.shell_error ~= 0 then
-    vim.api.print("Failed to clone lazy.nvim")
-    os.exit(1)
-  end
-end
-vim.opt.rtp:prepend(lazypath)
-
--- Setup lazy.nvim
-require("lazy").setup({
-	{ 'folke/tokyonight.nvim' },
-	{ 'lewis6991/gitsigns.nvim' },
-	{ 'nvim-treesitter/nvim-treesitter' },
-})
+-- [[ Plugin config ]]
+require 'plugins.lazy'
 
 print('hello world')
