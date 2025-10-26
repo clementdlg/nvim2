@@ -48,8 +48,8 @@ ARG MASON_PATH="${HOME}/.local/share/nvim/mason"
 ARG LAZY_PATH="${HOME}/.local/share/nvim/lazy"
 ARG CFG_REPO
 ARG NVIM_CFG
-COPY --from=plugin-build $LAZY_PATH $LAZY_PATH
-COPY --from=lsp-build $MASON_PATH $MASON_PATH
+COPY --chown=${USER}:${USER} --from=plugin-build $LAZY_PATH $LAZY_PATH
+COPY --chown=${USER}:${USER} --from=lsp-build $MASON_PATH $MASON_PATH
 
 RUN git clone --depth 1 --branch=$BRANCH $CFG_REPO $NVIM_CFG
 WORKDIR $HOME/cwd
