@@ -19,8 +19,8 @@ vim.opt.rtp:prepend(lazypath)
 local ensure_installed = require("mason-tools").array
 
 -- Setup lazy.nvim
-require("lazy").setup({
-	'mason-tool-installer.nvim',
+require("lazy").setup({{
+	'WhoIsSethDaniel/mason-tool-installer.nvim',
 
 	dependencies = {
 		{
@@ -31,4 +31,4 @@ require("lazy").setup({
 	config = function()
 		ensure_installed = ensure_installed
 	end
-})
+}})
