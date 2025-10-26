@@ -1,2 +1,2 @@
 -- [[ Plugin config ]]
-require 'plugins.minideps'
+require 'plugins.lazy'
