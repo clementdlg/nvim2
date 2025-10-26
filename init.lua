@@ -6,6 +6,7 @@ else
   print("NVIM_CFG not set")
 end
 
-print('hello world')
 -- [[ Plugin config ]]
 require 'plugins.lazy'
+
+print('hello world')
