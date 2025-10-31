@@ -15,7 +15,7 @@ vim.o.timeoutlen = 600
 vim.o.splitright = true
 vim.o.splitbelow = true
 vim.o.list = true
-vim.opt.listchars = { tab = '❘ ', trail = '·', nbsp = '␣' }
+vim.opt.listchars = { tab = '│ ', trail = '·', nbsp = '␣' }
 vim.opt.autoindent = true
 vim.o.inccommand = 'split'
 vim.o.cursorline = true

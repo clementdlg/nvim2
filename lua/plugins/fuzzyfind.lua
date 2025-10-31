@@ -1,3 +1,21 @@
+MiniDeps.add({
+	source = 'nvim-telescope/telescope.nvim',
+	depends = {
+		'nvim-lua/plenary.nvim',
+		{
+			source = 'nvim-telescope/telescope-fzf-native.nvim',
+			hooks = { post_checkout = function()
+				vim.fn.system('make')
+			end
+		},
+			cond = function()
+				return vim.fn.executable('make') == 1
+			end
+		},
+		'nvim-tree/nvim-web-devicons',
+	},
+})
+
 -- [[ Configuration ]]
 
 -- [[ Imports ]]
@@ -16,7 +34,7 @@ local dropdown = function(picker)
 end
 
 -- [[ Keymaps ]]
-vim.keymap.set('n', '<leader>b', dropdown(builtin.buffers)) -- list buffers
+vim.keymap.set('n', '<leader>bl', dropdown(builtin.buffers)) -- list buffers
 vim.keymap.set('n', '<leader>o', builtin.find_files) -- find file in project
 vim.keymap.set('n', '<leader>fd', builtin.diagnostics) -- diagnostics
 vim.keymap.set('n', '<leader>fg', builtin.live_grep) -- grep projectwide
