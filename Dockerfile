@@ -1,57 +1,48 @@
 ARG USER="krem"
 ARG HOME="/home/${USER}"
-ARG CFG_REPO="https://github.com/clementdlg/nvim2.git"
-ARG NVIM_CFG="/home/${USER}/.config/nvim"
+
+ARG CFG_SRC="https://github.com/clementdlg/nvim2.git"
+ARG LAZY_SRC="https://github.com/folke/lazy.nvim.git"
+
+ARG CFG_DEST="/home/${USER}/.config/nvim"
+ARG LAZY_DEST="${HOME}/.local/share/nvim/lazy"
 
 # - - - - - - - - - -
-FROM alpine:3.22 AS nvim
+FROM alpine:3.22 AS build
+ARG BUILD_CMD="lua require('build')"
 ARG USER
 ARG HOME
-RUN apk update && apk add neovim git
-RUN adduser -h $HOME -D $USER
-USER $USER
-# - - - - - - - - - -
-FROM nvim AS tools
-ARG BRANCH="lazy"
-ARG USER
-ARG HOME
-ARG CFG_REPO
-ARG NVIM_CFG
+ARG NVIM_SRC="https://github.com/neovim/neovim.git"
+ARG CFG_SRC
+ARG LAZY_SRC
+ARG CFG_DEST
+ARG LAZY_DEST
 
-USER root
-RUN apk update && apk add gcc musl-dev npm \
+RUN apk update && apk add neovim git gcc musl-dev npm \
 	&& rm -rf /var/cache/apk/*
 
+RUN adduser -h $HOME -D $USER
 USER $USER
-WORKDIR $NVIM_CFG
-RUN git clone --branch=$BRANCH $CFG_REPO $NVIM_CFG
-# - - - - - - - - - -
-FROM tools AS plugin-build
-ARG BRANCH="lazy"
-ARG CFG_REPO
-ARG NVIM_CFG
-WORKDIR $NVIM_CFG
-RUN git checkout $BRANCH && git pull \
-	&& nvim --headless -c "qa"
-# - - - - - - - - - -
-FROM tools AS lsp-build
-ARG BRANCH="mason"
-ARG NVIM_CFG
-WORKDIR $NVIM_CFG
-RUN git checkout $BRANCH && git pull \
-	&& nvim --headless -c "MasonToolsInstallSync" -c "qa"
-# - - - - - - - - - -
-FROM nvim
-ARG BRANCH="docker-main"
-ARG HOME
-ARG MASON_PATH="${HOME}/.local/share/nvim/mason"
-ARG LAZY_PATH="${HOME}/.local/share/nvim/lazy"
-ARG CFG_REPO
-ARG NVIM_CFG
-COPY --chown=${USER}:${USER} --from=plugin-build $LAZY_PATH $LAZY_PATH
-COPY --chown=${USER}:${USER} --from=lsp-build $MASON_PATH $MASON_PATH
+WORKDIR $CFG_DEST
 
-RUN git clone --depth 1 --branch=$BRANCH $CFG_REPO $NVIM_CFG
+RUN git clone --depth 1 --branch=docker-main $CFG_SRC $CFG_DEST & \
+	git clone --depth 1 $LAZY_SRC $LAZY_DEST & \
+	wait && \
+	nvim --headless -c "$BUILD_CMD" +qa
+
+# - - - - - - - - - -
+FROM alpine:3.22
+ARG USER
+ARG HOME
+ARG NVIM_DEST="/usr/bin/nvim"
+ARG CFG_DEST
+ARG LAZY_DEST
+ARG MASON_DEST="${HOME}/.local/share/nvim/mason"
+
+COPY --chown=${USER}:${USER} --from=build $NVIM_DEST $NVIM_DEST
+COPY --chown=${USER}:${USER} --from=build $CFG_DEST $CFG_DEST
+COPY --chown=${USER}:${USER} --from=build $LAZY_DEST $LAZY_DEST
+COPY --chown=${USER}:${USER} --from=build $MASON_DEST $MASON_DEST
+
 WORKDIR $HOME/cwd
-ENV LC_ALL="en_US.UTF-8"
 ENTRYPOINT ["nvim"]
