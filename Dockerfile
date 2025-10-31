@@ -4,7 +4,7 @@ ARG HOME="/home/${USER}"
 ARG CFG_SRC="https://github.com/clementdlg/nvim2.git"
 ARG LAZY_SRC="https://github.com/folke/lazy.nvim.git"
 
-ARG CFG_DEST="/home/${USER}/.config/nvim"
+ARG CFG_DEST="/home/${USER}/.config"
 ARG LAZY_DEST="${HOME}/.local/share/nvim/lazy"
 
 # - - - - - - - - - -
@@ -23,12 +23,14 @@ RUN apk update && apk add neovim git gcc musl-dev npm \
 
 RUN adduser -h $HOME -D $USER
 USER $USER
-WORKDIR $CFG_DEST
+WORKDIR $HOME
+RUN mkdir -p $CFG_DEST && mkdir -p $LAZY_DEST
 
-RUN git clone --depth 1 --branch=docker-main $CFG_SRC $CFG_DEST & \
-	git clone --depth 1 $LAZY_SRC $LAZY_DEST & \
+RUN git clone --depth 1 --branch=docker-main $CFG_SRC "${CFG_DEST}/nvim" & \
+	git clone --depth 1 $LAZY_SRC "${LAZY_DEST}/lazy.nvim" & \
 	wait && \
-	nvim --headless -c "$BUILD_CMD" +qa
+	nvim --headless -c "$BUILD_CMD" +qa && \
+	rm -r "${LAZY_DEST}/{lazy.nvim,mason.nvim}" 
 
 # - - - - - - - - - -
 FROM alpine:3.22
@@ -39,10 +41,10 @@ ARG CFG_DEST
 ARG LAZY_DEST
 ARG MASON_DEST="${HOME}/.local/share/nvim/mason"
 
-COPY --chown=${USER}:${USER} --from=build $NVIM_DEST $NVIM_DEST
-COPY --chown=${USER}:${USER} --from=build $CFG_DEST $CFG_DEST
-COPY --chown=${USER}:${USER} --from=build $LAZY_DEST $LAZY_DEST
+COPY --chown=${USER}:${USER} --from=build $CFG_DEST   $CFG_DEST
+COPY --chown=${USER}:${USER} --from=build $NVIM_DEST  $NVIM_DEST
+COPY --chown=${USER}:${USER} --from=build $LAZY_DEST  $LAZY_DEST
 COPY --chown=${USER}:${USER} --from=build $MASON_DEST $MASON_DEST
 
-WORKDIR $HOME/cwd
+WORKDIR "${HOME}/cwd"
 ENTRYPOINT ["nvim"]
