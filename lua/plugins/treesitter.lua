@@ -11,7 +11,7 @@ require('nvim-treesitter.configs').setup({
 	ensure_installed = languages,
 	highlight = { enable = true },
 	auto_install = false,
-	sync_install = true,
+	-- sync_install = true,
 	-- disable for large files
 	disable = function(lang, buf)
 		local max_filesize = 100 * 1024 -- 100 KB

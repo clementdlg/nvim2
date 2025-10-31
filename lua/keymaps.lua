@@ -18,7 +18,7 @@ vim.keymap.set('n', 'n', 'nzz', { noremap = true, silent = true })
 vim.keymap.set('n', 'N', 'Nzz', { noremap = true, silent = true })
 
 -- center cursor
-vim.keymap.set('n', '<Leader>e', ':Lexplore<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<Leader>e', ':30 Lexplore<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<Leader>bn', ':bn<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<Leader>bp', ':bp<CR>', { noremap = true, silent = true })
 

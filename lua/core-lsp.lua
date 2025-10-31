@@ -4,6 +4,7 @@
 -- This is the part of the LSP config that is native to Neovim. No plugin config here
 -- [[ Keymaps ]]
 -- TODO: Add keymaps
+vim.keymap.set("n", "gD", vim.lsp.buf.definition, { desc = "LSP: Go to definition" })
 
 -- [[ Diagnostics ]]
 local severity = vim.diagnostic.severity
