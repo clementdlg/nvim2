@@ -19,9 +19,7 @@ RUN chmod u+x $SCRIPT && ./${SCRIPT}
 
 # - - - - - - - - - -
 FROM alpine:3.22
-ARG LPEG_PATH="/usr/lib/lua/5.1/lpeg.so"
-COPY --from=nvim-build $LPEG_PATH $LPEG_PATH
-COPY --from=nvim-build /build/usr/ /usr
+COPY --from=nvim-build /build/usr /usr
 
 # - - - - - - - - - -
 # FROM nvim AS build

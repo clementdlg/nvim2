@@ -6,7 +6,7 @@ set -e
 # Credits : Heavily inspired from Alpine's neovim package
 
 NVIM_REPO="https://github.com/neovim/neovim.git"
-TS_REPO="https://github.com/neovim/tree-sitter-vimdoc.git"
+prefix="/build"
 
 if [ -z "$BRANCH" ]; then
 	BRANCH="stable"
@@ -41,8 +41,7 @@ cd neovim
 ## BUILD ##
 cmake -B build -G Ninja \
 	-DCMAKE_BUILD_TYPE=Release \
-	-DCMAKE_INSTALL_PREFIX=/build/usr \
-	-DUSE_BUNDLED_TS=ON
+	-DCMAKE_INSTALL_PREFIX="${prefix}/usr"
 
 cmake --build build
 cmake --install build
@@ -60,8 +59,19 @@ solibs="/lib/ld-musl-aarch64.so*
 /lib/ld-musl-aarch64.so*
 /usr/lib/libgcc_s.so*"
 
-solibs=`echo $solibs | tr "\n" " "`
+solibs="$(echo $solibs | tr "\n" " ")"
 
 for lib in $solibs; do
-	cp $lib /build/usr/lib
+	dirname="$(dirname "$lib")"
+	path="${prefix}${dirname}"
+	mkdir -p "$path"
+	cp $lib "$path"
 done
+
+
+# treesitter vimdoc.so
+# apk update && apk add musl-dev gcc git make
+# git clone --depth 1 https://github.com/neovim/tree-sitter-vimdoc.git /build
+# cd /build/
+# make
+# ls libtree-sitter-vimdoc.so
