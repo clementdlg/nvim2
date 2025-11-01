@@ -14,37 +14,37 @@ ARG BRANCH="stable"
 ENV BRANCH="$BRANCH"
 
 WORKDIR /build
-COPY "./docker/${SCRIPT}" .
+COPY "./build/${SCRIPT}" .
 RUN chmod u+x $SCRIPT && ./${SCRIPT}
 
 # - - - - - - - - - -
-FROM alpine:3.22
+FROM alpine:3.22 AS nvim
 COPY --from=nvim-build /build/usr /usr
 
 # - - - - - - - - - -
-# FROM nvim AS build
-# ARG BUILD_CMD="lua require('build')"
-# ARG USER
-# ARG HOME
-# ARG CFG_SRC
-# ARG LAZY_SRC
-# ARG CFG_DEST
-# ARG LAZY_DEST
-# 
-# RUN apk update && apk add git gcc musl-dev npm \
-# 	&& rm -rf /var/cache/apk/*
-# 
-# RUN adduser -h $HOME -D $USER
-# USER $USER
-# WORKDIR $HOME
-# RUN mkdir -p $CFG_DEST && mkdir -p $LAZY_DEST
-# 
-# RUN git clone --depth 1 --branch=docker-main $CFG_SRC "${CFG_DEST}/nvim" & \
-# 	git clone --depth 1 $LAZY_SRC "${LAZY_DEST}/lazy.nvim" & \
-# 	wait && \
-# 	nvim --headless -c "$BUILD_CMD" +qa && \
-# 	rm -r "${LAZY_DEST}/{lazy.nvim,mason.nvim}" 
-# 
+FROM nvim AS config-build
+ARG USER
+ARG HOME
+ARG CFG_SRC
+ARG LAZY_SRC
+ARG CFG_DEST
+ARG LAZY_DEST
+ENV NVIM_APPNAME="nvim/build"
+
+RUN apk update && apk add git gcc musl-dev npm \
+	&& rm -rf /var/cache/apk/*
+
+RUN adduser -h $HOME -D $USER
+USER $USER
+WORKDIR $HOME
+RUN mkdir -p $CFG_DEST && mkdir -p $LAZY_DEST
+
+RUN git clone --depth 1 --branch=docker-main $CFG_SRC "${CFG_DEST}/nvim" & \
+	git clone --depth 1 $LAZY_SRC "${LAZY_DEST}/lazy.nvim" & \
+	wait && \
+	nvim --headless +Build && \
+	rm -r "${LAZY_DEST}/{lazy.nvim,mason.nvim}" 
+
 # # - - - - - - - - - -
 # FROM nvim
 # ARG USER
