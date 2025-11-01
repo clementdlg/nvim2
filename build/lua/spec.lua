@@ -1,1 +1,3 @@
-print('coucou depuis spec')
+return {
+	"folke/tokyonight.nvim",
+}
