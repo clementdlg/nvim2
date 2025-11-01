@@ -1,4 +1,4 @@
-MiniDeps.add('lewis6991/gitsigns.nvim')
+-- MiniDeps.add('lewis6991/gitsigns.nvim')
 
 require('gitsigns').setup {
 	signs = {
