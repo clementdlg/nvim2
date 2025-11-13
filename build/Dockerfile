@@ -43,7 +43,7 @@ RUN git clone --depth 1 --branch=docker-main $CFG_SRC "${CFG_DEST}/nvim" & \
 	git clone --depth 1 $LAZY_SRC "${LAZY_DEST}/lazy.nvim" & \
 	wait && \
 	nvim --headless +Build && \
-	rm -r "${LAZY_DEST}/{lazy.nvim,mason.nvim}" 
+	# rm -r "${LAZY_DEST}/{lazy.nvim,mason.nvim}"
 
 # # - - - - - - - - - -
 # FROM nvim
