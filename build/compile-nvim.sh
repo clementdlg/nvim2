@@ -6,11 +6,14 @@ set -e
 # Credits : Heavily inspired from Alpine's neovim package
 
 NVIM_REPO="https://github.com/neovim/neovim.git"
-# ARCH="aarch64" # macos
-ARCH="x86_64"
-
 prefix="/build"
 
+# get the arch from ENV
+if [ -z "$ARCH" ]; then
+	ARCH="x86_64"
+fi
+
+# get the branch from ENV
 if [ -z "$BRANCH" ]; then
 	BRANCH="stable"
 fi
@@ -59,7 +62,6 @@ solibs="/lib/ld-musl-${ARCH}.so*
 /usr/lib/libintl.so*
 /usr/lib/libluajit-5.1.so*
 /usr/lib/libuv.so*
-/lib/ld-musl-${ARCH}.so*
 /usr/lib/libgcc_s.so*"
 
 solibs="$(echo $solibs | tr "\n" " ")"

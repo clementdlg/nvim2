@@ -12,6 +12,8 @@ FROM alpine:3.22 AS nvim-build
 ARG SCRIPT="compile-nvim.sh"
 ARG BRANCH="stable"
 ENV BRANCH="$BRANCH"
+ARG ARCH="x86_64"
+ENV ARCH="$ARCH"
 
 WORKDIR /build
 COPY "./build/${SCRIPT}" .
@@ -39,10 +41,10 @@ USER $USER
 WORKDIR $HOME
 RUN mkdir -p $CFG_DEST && mkdir -p $LAZY_DEST
 
-RUN git clone --depth 1 --branch=docker-main $CFG_SRC "${CFG_DEST}/nvim" & \
-	git clone --depth 1 $LAZY_SRC "${LAZY_DEST}/lazy.nvim" & \
-	wait && \
-	nvim --headless +Build && \
+# RUN git clone --depth 1 --branch=docker-main $CFG_SRC "${CFG_DEST}/nvim" & \
+# 	git clone --depth 1 $LAZY_SRC "${LAZY_DEST}/lazy.nvim" & \
+# 	wait && \
+# 	nvim --headless +Build && \
 	# rm -r "${LAZY_DEST}/{lazy.nvim,mason.nvim}"
 
 # # - - - - - - - - - -
