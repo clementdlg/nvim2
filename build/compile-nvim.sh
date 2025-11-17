@@ -6,6 +6,9 @@ set -e
 # Credits : Heavily inspired from Alpine's neovim package
 
 NVIM_REPO="https://github.com/neovim/neovim.git"
+# ARCH="aarch64" # macos
+ARCH="x86_64"
+
 prefix="/build"
 
 if [ -z "$BRANCH" ]; then
@@ -47,7 +50,7 @@ cmake --build build
 cmake --install build
 
 ## COPY LIB OVER ##
-solibs="/lib/ld-musl-aarch64.so*
+solibs="/lib/ld-musl-${ARCH}.so*
 /usr/lib/libluv.so*
 /usr/lib/lua/5.1/lpeg.so*
 /usr/lib/libtree-sitter.so*
@@ -56,7 +59,7 @@ solibs="/lib/ld-musl-aarch64.so*
 /usr/lib/libintl.so*
 /usr/lib/libluajit-5.1.so*
 /usr/lib/libuv.so*
-/lib/ld-musl-aarch64.so*
+/lib/ld-musl-${ARCH}.so*
 /usr/lib/libgcc_s.so*"
 
 solibs="$(echo $solibs | tr "\n" " ")"
