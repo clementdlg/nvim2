@@ -1,0 +1,9 @@
+services:
+  nvim:
+    build:
+      context: .
+      dockerfile: build/Dockerfile
+      args:
+        BRANCH: stable
+        ARCH: x86_64
+    image: nvim-dc
