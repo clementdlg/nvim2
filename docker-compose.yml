@@ -2,7 +2,7 @@ services:
   nvim:
     build:
       context: .
-      dockerfile: build/Dockerfile
+      dockerfile: build/Dockerfile.compile
       args:
         BRANCH: stable
         ARCH: x86_64

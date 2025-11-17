@@ -1,0 +1,16 @@
+FROM alpine:3.22 AS nvim-build
+ARG SCRIPT="compile-nvim.sh"
+ARG BRANCH="stable"
+ENV BRANCH="$BRANCH"
+ARG ARCH="x86_64"
+ENV ARCH="$ARCH"
+
+WORKDIR /build
+COPY "./build/${SCRIPT}" .
+RUN chmod u+x $SCRIPT && ./${SCRIPT}
+
+# - - - - - - - - - -
+FROM alpine:3.22 AS nvim
+COPY --from=nvim-build /build/usr /usr
+
+ENTRYPOINT ["nvim"]
