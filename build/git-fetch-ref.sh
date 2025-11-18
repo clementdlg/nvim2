@@ -1,40 +1,35 @@
 #!/bin/sh
 
-# debug start
-_GIT_REPO="https://github.com/neovim/neovim.git"
-_REF_TYPE="commit"
-# _REF="release-0.10" # branch
-# _REF="stable" # tag
-_REF="18e6ba90e25327dd8b34960902f3433cf00259dc" # commit
-
-echo "ref type : $_REF_TYPE"
-
-# debug end
+# Description : this script is used to clone a repo and set the HEAD to either : a branch, a tag or a commit hash. 
+# This script rely on environment variables such as GIT_REPO, GIT_REF and REPO_NAME. 
+# Its intendent to be used inside of a docker container but it can also be used outside.
+# Author : Clément de la Genière, 2025
 set -eu
 
 command -v git
-echo "Repo : $_GIT_REPO"
-echo "Ref : $_REF"
-repo_name="$(basename "$_GIT_REPO")"
+echo "Repo : $GIT_REPO"
+echo "Ref : $GIT_REF"
+echo "Ref type : $REF_TYPE"
+echo "Repo name : $REPO_NAME"
 
-git clone --depth 1 "$_GIT_REPO" "$repo_name"
-cd "$repo_name"
+git clone --depth 1 "$GIT_REPO" "$REPO_NAME"
+cd "$REPO_NAME"
 
-case "$_REF_TYPE" in
+case "$REF_TYPE" in
 	"branch")
-		git fetch --depth 1 origin "$_REF"
-		git checkout -b "$_REF" FETCH_HEAD
+		git fetch --depth 1 origin "$GIT_REF"
+		git checkout -b "$GIT_REF" FETCH_HEAD
 		;;
 	"commit")
-		git fetch --depth 1 origin "$_REF"
-		git checkout "$_REF"
+		git fetch --depth 1 origin "$GIT_REF"
+		git checkout "$GIT_REF"
 		;;
 	"tag") 
-        git fetch --depth 1 origin "refs/tags/$_REF:refs/tags/$_REF"
-        git checkout "$_REF"
+        git fetch --depth 1 origin "refs/tags/$GIT_REF:refs/tags/$GIT_REF"
+        git checkout "$GIT_REF"
 		;;
 	*)
-		echo "Unknown ref type: $_REF_TYPE" >&2
+		echo "Unknown ref type: $REF_TYPE" >&2
 		exit 1
 		;;
 esac
