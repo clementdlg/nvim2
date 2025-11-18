@@ -1,5 +1,7 @@
 # Introduction
-- This project is an automated tool for building Neovim. It uses docker to perform the compilation. It can build any git ref, like a specific branch, a tag or a commit hash. The only dependency is docker. All the build dependencies are installed inside of the docker container.
+- This project is an automated tool for building Neovim.
+- It uses docker to perform the compilation. All the build dependencies are installed inside of the docker container.
+- It can build any git ref, like a specific branch, a tag or a commit hash.
 
 # Requirements
 - packages : 
