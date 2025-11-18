@@ -12,19 +12,19 @@ echo "Ref : $GIT_REF"
 echo "Ref type : $REF_TYPE"
 echo "Repo name : $REPO_NAME"
 
-git clone --depth 1 "$GIT_REPO" "$REPO_NAME"
-cd "$REPO_NAME"
-
 case "$REF_TYPE" in
 	"branch")
-		git fetch --depth 1 origin "$GIT_REF"
-		git checkout -b "$GIT_REF" FETCH_HEAD
+		git clone --depth 1 --branch "$GIT_REF" "$GIT_REPO" "$REPO_NAME"
 		;;
 	"commit")
+		git clone --depth 1 "$GIT_REPO" "$REPO_NAME"
+		cd "$REPO_NAME"
 		git fetch --depth 1 origin "$GIT_REF"
 		git checkout "$GIT_REF"
 		;;
 	"tag") 
+		git clone --depth 1 "$GIT_REPO" "$REPO_NAME"
+		cd "$REPO_NAME"
         git fetch --depth 1 origin "refs/tags/$GIT_REF:refs/tags/$GIT_REF"
         git checkout "$GIT_REF"
 		;;
