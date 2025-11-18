@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: build/Dockerfile.compile
       args:
-        BRANCH: stable
+        GIT_REF: master
+        REF_TYPE: branch
         ARCH: x86_64
     image: nvim-dc
