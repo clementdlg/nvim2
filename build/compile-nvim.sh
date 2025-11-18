@@ -42,10 +42,8 @@ rm -rf /var/cache/apk/*
 
 ## REPO CLONE ##
 # git clone --branch "$BRANCH" --depth 1 $NVIM_REPO neovim
-git clone --depth 1 $NVIM_REPO neovim
+git clone --depth 1 --branch "$BRANCH" $NVIM_REPO neovim
 cd neovim
-git fetch --depth 1 origin "$BRANCH"
-git checkout "$BRANCH"
 
 ## BUILD ##
 cmake -B build -G Ninja \
