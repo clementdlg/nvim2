@@ -1,12 +1,15 @@
 # inspired from Alpine Linux official Neovim package :
 # https://gitlab.alpinelinux.org/alpine/aports/-/blob/master/community/neovim/APKBUILD
-
-FROM alpine:3.22 AS nvim-build
-ARG NVIM_REPO="https://github.com/neovim/neovim.git"
-ARG SCRIPT="compile-nvim.sh"
-ARG BRANCH="stable"
+# ARG ARCH="aarch64"
 ARG ARCH="x86_64"
+
+FROM alpine:3.22 AS builder
+ARG GIT_REPO="https://github.com/neovim/neovim.git"
+ARG REPO_NAME="neovim"
+ARG GIT_REF="stable"
+ARG REF_TYPE="tag"
 ARG PREFIX="/build"
+ARG ARCH
 
 RUN apk update && \
 	apk add \
@@ -30,8 +33,10 @@ RUN apk update && \
 	rm -rf /var/cache/apk/*
 
 WORKDIR "$PREFIX"
-RUN git clone --depth 1 --branch "$BRANCH" "$NVIM_REPO" neovim
-WORKDIR "${PREFIX}/neovim"
+COPY ./build/git-fetch-ref.sh "$PREFIX"
+RUN chmod u+x  "${PREFIX}/git-fetch-ref.sh" && \
+	"${PREFIX}/git-fetch-ref.sh" 
+WORKDIR  "${PREFIX}/${REPO_NAME}"
 
 RUN cmake -B build -G Ninja \
 	-DCMAKE_BUILD_TYPE=Release \
@@ -41,19 +46,21 @@ RUN cmake -B build -G Ninja \
 
 # - - - - - - - - - -
 FROM alpine:3.22 AS nvim
+ARG ARCH
+
 RUN mkdir -p "/usr/lib/lua/5.1"
 
-COPY --from=nvim-build /build/usr /usr
-COPY --from=nvim-build /lib/ld-musl-x86_64.so.1 /lib/ld-musl-x86_64.so.1
-COPY --from=nvim-build /usr/lib/libluv.so.1 /usr/lib/libluv.so.1
-COPY --from=nvim-build /usr/lib/lua/5.1/lpeg.so /usr/lib/lua/5.1/lpeg.so
-COPY --from=nvim-build /usr/lib/libtree-sitter.so.0.25 /usr/lib/libtree-sitter.so.0.25
-COPY --from=nvim-build /usr/lib/libunibilium.so.4 /usr/lib/libunibilium.so.4
-COPY --from=nvim-build /usr/lib/libutf8proc.so.3 /usr/lib/libutf8proc.so.3
-COPY --from=nvim-build /usr/lib/libintl.so.8 /usr/lib/libintl.so.8
-COPY --from=nvim-build /usr/lib/libluajit-5.1.so.2 /usr/lib/libluajit-5.1.so.2
-COPY --from=nvim-build /usr/lib/libuv.so.1 /usr/lib/libuv.so.1
-COPY --from=nvim-build /usr/lib/libgcc_s.so.1 /usr/lib/libgcc_s.so.1
+COPY --from=builder /build/usr /usr
+COPY --from=builder "/lib/ld-musl-${ARCH}.so.1" "/lib/ld-musl-${ARCH}.so.1"
+COPY --from=builder /usr/lib/libluv.so.1 /usr/lib/libluv.so.1
+COPY --from=builder /usr/lib/lua/5.1/lpeg.so /usr/lib/lua/5.1/lpeg.so
+COPY --from=builder /usr/lib/libtree-sitter.so.0.25 /usr/lib/libtree-sitter.so.0.25
+COPY --from=builder /usr/lib/libunibilium.so.4 /usr/lib/libunibilium.so.4
+COPY --from=builder /usr/lib/libutf8proc.so.3 /usr/lib/libutf8proc.so.3
+COPY --from=builder /usr/lib/libintl.so.8 /usr/lib/libintl.so.8
+COPY --from=builder /usr/lib/libluajit-5.1.so.2 /usr/lib/libluajit-5.1.so.2
+COPY --from=builder /usr/lib/libuv.so.1 /usr/lib/libuv.so.1
+COPY --from=builder /usr/lib/libgcc_s.so.1 /usr/lib/libgcc_s.so.1
 
 ENTRYPOINT ["nvim"]
 
