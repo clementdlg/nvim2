@@ -1,16 +1,65 @@
+# inspired from Alpine Linux official Neovim package :
+# https://gitlab.alpinelinux.org/alpine/aports/-/blob/master/community/neovim/APKBUILD
+
 FROM alpine:3.22 AS nvim-build
+ARG NVIM_REPO="https://github.com/neovim/neovim.git"
 ARG SCRIPT="compile-nvim.sh"
 ARG BRANCH="stable"
-ENV BRANCH="$BRANCH"
 ARG ARCH="x86_64"
-ENV ARCH="$ARCH"
+ARG PREFIX="/build"
 
-WORKDIR /build
-COPY "./build/${SCRIPT}" .
-RUN chmod u+x $SCRIPT && ./${SCRIPT}
+RUN apk update && \
+	apk add \
+		git \
+		lua5.1-lpeg \
+		luajit-dev \
+		build-base \
+		cmake \
+		gettext-dev \
+		gperf \
+		libtermkey-dev \
+		libuv-dev \
+		libvterm-dev \
+		lua-luv-dev \
+		lua5.1-mpack \
+		msgpack-c-dev \
+		samurai \
+		tree-sitter-dev \
+		unibilium-dev \
+		utf8proc-dev && \
+	rm -rf /var/cache/apk/*
+
+WORKDIR "$PREFIX"
+RUN git clone --depth 1 --branch "$BRANCH" "$NVIM_REPO" neovim
+WORKDIR "${PREFIX}/neovim"
+
+RUN cmake -B build -G Ninja \
+	-DCMAKE_BUILD_TYPE=Release \
+	-DCMAKE_INSTALL_PREFIX="${PREFIX}/usr" && \
+	cmake --build build && \
+	cmake --install build
 
 # - - - - - - - - - -
 FROM alpine:3.22 AS nvim
+RUN mkdir -p "/usr/lib/lua/5.1"
+
 COPY --from=nvim-build /build/usr /usr
+COPY --from=nvim-build /lib/ld-musl-x86_64.so.1 /lib/ld-musl-x86_64.so.1
+COPY --from=nvim-build /usr/lib/libluv.so.1 /usr/lib/libluv.so.1
+COPY --from=nvim-build /usr/lib/lua/5.1/lpeg.so /usr/lib/lua/5.1/lpeg.so
+COPY --from=nvim-build /usr/lib/libtree-sitter.so.0.25 /usr/lib/libtree-sitter.so.0.25
+COPY --from=nvim-build /usr/lib/libunibilium.so.4 /usr/lib/libunibilium.so.4
+COPY --from=nvim-build /usr/lib/libutf8proc.so.3 /usr/lib/libutf8proc.so.3
+COPY --from=nvim-build /usr/lib/libintl.so.8 /usr/lib/libintl.so.8
+COPY --from=nvim-build /usr/lib/libluajit-5.1.so.2 /usr/lib/libluajit-5.1.so.2
+COPY --from=nvim-build /usr/lib/libuv.so.1 /usr/lib/libuv.so.1
+COPY --from=nvim-build /usr/lib/libgcc_s.so.1 /usr/lib/libgcc_s.so.1
 
 ENTRYPOINT ["nvim"]
+
+# treesitter vimdoc.so
+# apk update && apk add musl-dev gcc git make
+# git clone --depth 1 https://github.com/neovim/tree-sitter-vimdoc.git /build
+# cd /build/
+# make
+# ls libtree-sitter-vimdoc.so
