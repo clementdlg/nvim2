@@ -6,6 +6,24 @@
 # Author : Clément de la Genière, 2025
 set -eu
 
+fetch_branch() {
+	git clone --depth 1 --branch "$GIT_REF" "$GIT_REPO" "$REPO_NAME"
+}
+
+fetch_tag() {
+	git clone --depth 1 "$GIT_REPO" "$REPO_NAME"
+	cd "$REPO_NAME"
+	git fetch --depth 1 origin "refs/tags/$GIT_REF:refs/tags/$GIT_REF"
+	git checkout "$GIT_REF"
+}
+
+fetch_commit() {
+	git clone --depth 1 "$GIT_REPO" "$REPO_NAME"
+	cd "$REPO_NAME"
+	git fetch --depth 1 origin "$GIT_REF"
+	git checkout "$GIT_REF"
+}
+
 command -v git
 echo "Repo : $GIT_REPO"
 echo "Ref : $GIT_REF"
@@ -13,21 +31,9 @@ echo "Ref type : $REF_TYPE"
 echo "Repo name : $REPO_NAME"
 
 case "$REF_TYPE" in
-	"branch")
-		git clone --depth 1 --branch "$GIT_REF" "$GIT_REPO" "$REPO_NAME"
-		;;
-	"commit")
-		git clone --depth 1 "$GIT_REPO" "$REPO_NAME"
-		cd "$REPO_NAME"
-		git fetch --depth 1 origin "$GIT_REF"
-		git checkout "$GIT_REF"
-		;;
-	"tag") 
-		git clone --depth 1 "$GIT_REPO" "$REPO_NAME"
-		cd "$REPO_NAME"
-        git fetch --depth 1 origin "refs/tags/$GIT_REF:refs/tags/$GIT_REF"
-        git checkout "$GIT_REF"
-		;;
+	"branch") fetch_branch ;;
+	"commit") fetch_commit ;;
+	"tag") fetch_tag ;;
 	*)
 		echo "Unknown ref type: $REF_TYPE" >&2
 		exit 1
